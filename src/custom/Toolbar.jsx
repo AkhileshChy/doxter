@@ -7,8 +7,62 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BoldIcon, ChevronDownIcon, ItalicIcon, ListTodoIcon, MessageSquarePlusIcon, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from 'lucide-react'
+import { BoldIcon, ChevronDownIcon, HighlighterIcon, ItalicIcon, ListTodoIcon, MessageSquarePlusIcon, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from 'lucide-react'
 import React from 'react'
+import { CirclePicker } from 'react-color'
+
+const HighlightColorButton = () => {
+    const { editor } = useEditorStore()
+    const value = editor?.getAttributes("highlight").color || "#FFFFFF"
+    const onChange = (color) => {
+        editor?.chain().focus().setHighlight({ color: color.hex }).run()
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button
+                    className='h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm'
+                >
+                    <HighlighterIcon className='size-4' />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <CirclePicker
+                    color={value}
+                    onChange={onChange}
+                />
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
+
+const TextColorButton = () => {
+    const { editor } = useEditorStore()
+    const value = editor?.getAttributes("textStyle").color || "#000000"
+    const onChange = (color) => {
+        editor?.chain().focus().setColor(color.hex).run()
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button
+                    className='h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm'
+                >
+                    <span className='text-xs'>A</span>
+                    <div className='h-0.5 w-full' style={{ backgroundColor: value }}></div>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <CirclePicker
+                    color={value}
+                    onChange={onChange}
+                />
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
 
 const HeadingLevelButton = () => {
     const { editor } = useEditorStore()
@@ -48,7 +102,7 @@ const HeadingLevelButton = () => {
                         key={value}
                         style={{ fontSize }}
                         onClick={() => {
-                            if (value === 0){
+                            if (value === 0) {
                                 editor?.chain().focus().setParagraph().run()
                             } else {
                                 editor?.chain().toggleHeading({ level: value }).run()
@@ -56,7 +110,7 @@ const HeadingLevelButton = () => {
                         }}
                         className={cn(
                             "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-                            (value === 0 && !editor?.isActive("heading")) || editor?.isActive("heading", { level : value}) && "bg-neutral-200/80"
+                            (value === 0 && !editor?.isActive("heading")) || editor?.isActive("heading", { level: value }) && "bg-neutral-200/80"
                         )}
                     >
                         {label}
@@ -203,6 +257,8 @@ const Toolbar = () => {
             {sections[1].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
+            <TextColorButton />
+            <HighlightColorButton />
             <Separator orientation="vertical" className="h-6 bg-neutral-300" />
             {sections[2].map((item) => (
                 <ToolbarButton key={item.label} {...item} />

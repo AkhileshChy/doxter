@@ -13,10 +13,14 @@ import Image from '@tiptap/extension-image'
 import StarterKit from '@tiptap/starter-kit'
 import { useEditorStore } from '@/store/use-editor-store'
 import TextStyle from '@tiptap/extension-text-style'
+import Highlight from '@tiptap/extension-highlight'
+import { Color } from '@tiptap/extension-color'
+import Ruler from './Ruler'
 
 const Editor = () => {
     const { setEditor } = useEditorStore()
     const editor = useEditor({
+        immediatelyRender: false,
         onCreate({ editor }){
             setEditor(editor)
         },
@@ -49,6 +53,7 @@ const Editor = () => {
         },
         extensions: [
             StarterKit,
+            Color,
             FontFamily,
             TextStyle,
             Table.configure({
@@ -58,6 +63,9 @@ const Editor = () => {
             TableHeader,
             TableCell,
             Image,
+            Highlight.configure({
+                multicolor: true,
+            }),
             Underline,
             ImageResize,
             TaskItem.configure({
@@ -70,6 +78,7 @@ const Editor = () => {
 
     return (
         <div className='size-full overflow-x-auto bg-[#F9FBFD] px-4 print:p-0 print:bg-white print:overflow-visible'>
+            <Ruler />
             <div className='min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0'>
                 <EditorContent editor={editor} />
             </div>
